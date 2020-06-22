@@ -5,7 +5,7 @@ from Room import Room
 
 class Room0(Room):
     def __init__(self):
-        sprite = [pygame.transform.scale(pygame.image.load('Images\\Bliss_(Windows_XP).png'), (1000,1000))]
+        sprite = [pygame.transform.scale(pygame.image.load('Images\\Bliss_(Windows_XP).png'), (700,700))]
         roomNum = 0
         entrances = []
         entities = []

@@ -20,11 +20,11 @@ class Controller:
 
         mainCharChar = MainCharacter.MainCharacter()
         self.mainCharacter = RoomObjectWrapper(mainCharChar, 0, 0)
-        
+
         self.bufferLowerX = 200
-        self.bufferUpperX = 300
+        self.bufferUpperX = 225
         self.bufferLowerY = 200
-        self.bufferUpperY = 300
+        self.bufferUpperY = 225
 
         self.velocity = 5
         # mode 0 for noraml, 1 for battle
@@ -45,35 +45,44 @@ class Controller:
 
                 x = self.mainCharacter.roomXPos
                 y = self.mainCharacter.roomYPos
-                charCentered = (x > self.bufferLowerX) and (x < self.bufferUpperX) and (y > self.bufferLowerY) and (y < self.bufferUpperY)
+                charCenteredX = (x > self.bufferLowerX) and (x < self.bufferUpperX)
+                charCenteredY = (y > self.bufferLowerY) and (y < self.bufferUpperY)
 
                 keyPressed = pygame.key.get_pressed()
-                if keyPressed[pygame.K_LEFT]:
 
-                    if((curRoom.baseX) <= -self.velocity and charCentered ):
+                if(keyPressed[pygame.K_SPACE]):
+                    self.velocity = 10
+
+                if keyPressed[pygame.K_LEFT]:
+                    self.mainCharacter.object.facing = "L"
+                    if((curRoom.baseX) <= -self.velocity and charCenteredX ):
                         curRoom.baseX += self.velocity
                     elif(self.mainCharacter.roomXPos >= self.velocity):
                         self.mainCharacter.roomXPos -= self.velocity
 
                 if keyPressed[pygame.K_RIGHT]:
-
-                    if ((curRoom.baseX + curRoom.width - self.windowWidth) >= self.velocity  and charCentered ):
+                    self.mainCharacter.object.facing = "R"
+                    if ((curRoom.baseX + curRoom.width - self.windowWidth) >= self.velocity  and charCenteredX ):
                         curRoom.baseX -= self.velocity
-                    elif (self.mainCharacter.roomXPos <= self.windowWidth - self.velocity):
+                    elif (self.mainCharacter.roomXPos <= self.windowWidth - self.velocity - self.mainCharacter.object.getWidth()):
                         self.mainCharacter.roomXPos += self.velocity
 
                 if keyPressed[pygame.K_UP]:
-                    if ((curRoom.baseY) <= -self.velocity  and charCentered):
+                    self.mainCharacter.object.facing = "U"
+                    if ((curRoom.baseY) <= -self.velocity  and charCenteredY):
                         curRoom.baseY += self.velocity
                     elif (self.mainCharacter.roomYPos >= self.velocity):
                         self.mainCharacter.roomYPos -= self.velocity
 
                 if keyPressed[pygame.K_DOWN]:
-                    if ((curRoom.baseY + curRoom.height - self.windowHeight) >= self.velocity  and charCentered):
+                    self.mainCharacter.object.facing = "D"
+                    if ((curRoom.baseY + curRoom.height - self.windowHeight) >= self.velocity  and charCenteredY):
                         curRoom.baseY -= self.velocity
-                    elif (self.mainCharacter.roomYPos <= self.windowHeight - self.velocity):
+                    elif (self.mainCharacter.roomYPos <= self.windowHeight - self.velocity - self.mainCharacter.object.getHeight()):
                         self.mainCharacter.roomYPos += self.velocity
 
+
+                self.velocity = 5
                 self.updateScreen()
         pygame.quit()
 
