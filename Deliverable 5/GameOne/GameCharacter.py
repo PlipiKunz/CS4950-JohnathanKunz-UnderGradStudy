@@ -3,7 +3,7 @@ from GameObject import GameObject
 
 class GameCharacter(GameObject):
     def __init__(self, sprs, dialogSprs, battleSprs, noises, dialogNoises, attacks, ownHitbox, name):
-        super().__init__(sprs, noises, ownHitbox, name)\
+        super().__init__(sprs, noises, ownHitbox, name)
 
         self.dialogSprites = dialogSprs
         self.battleSprites = battleSprs
@@ -11,9 +11,9 @@ class GameCharacter(GameObject):
         self.attacks = attacks
 
     def interact(self, controller):
-        print("SHOULDNTBEHERE Character Interact")
+        print("SHOULDNTBEHERE Character Interact" + self.name)
         pass
 
     def battle(self, controller):
-        print("SHOULDNTBEHERE Character Battle")
+        print("SHOULDNTBEHERE Character Battle" + self.name)
         pass

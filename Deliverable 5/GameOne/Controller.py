@@ -2,14 +2,16 @@ import pygame
 from Room import Room
 from RoomObjectWrapper import RoomObjectWrapper
 
-import MainCharacter
-from RoomZero import Room0
+from Characters import MainCharacter
+from Rooms.RoomZero import Room0
 
 
 class Controller:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((500, 500))
+        self.windowWidth = 500
+        self.windowHeight = 500
+        self.screen = pygame.display.set_mode((self.windowWidth, self.windowHeight))
         pygame.display.set_caption("Game One")
 
         self.rooms = [Room0()]
@@ -18,10 +20,16 @@ class Controller:
 
         mainCharChar = MainCharacter.MainCharacter()
         self.mainCharacter = RoomObjectWrapper(mainCharChar, 0, 0)
+        
+        self.bufferLowerX = 200
+        self.bufferUpperX = 300
+        self.bufferLowerY = 200
+        self.bufferUpperY = 300
 
-        self.charVelocity = 5
+        self.velocity = 5
+        # mode 0 for noraml, 1 for battle
+        self.mode = 0
 
-        print(self.mainCharacter.object)
         self.run = True
 
     def main(self):
@@ -32,33 +40,50 @@ class Controller:
                 if event.type == pygame.QUIT:
                     self.run = False
 
-            keyPressed = pygame.key.get_pressed()
-            if keyPressed[pygame.K_LEFT]:
-                self.mainCharacter.roomXPos -= self.charVelocity
-            if keyPressed[pygame.K_RIGHT]:
-                self.mainCharacter.roomXPos += self.charVelocity
-            if keyPressed[pygame.K_UP]:
-                self.mainCharacter.roomYPos -= self.charVelocity
-            if keyPressed[pygame.K_DOWN]:
-                self.mainCharacter.roomYPos += self.charVelocity
+            if(self.mode==0):
+                curRoom = self.rooms[self.currentRoomIndex]
 
-            self.updateScreen()
+                x = self.mainCharacter.roomXPos
+                y = self.mainCharacter.roomYPos
+                charCentered = (x > self.bufferLowerX) and (x < self.bufferUpperX) and (y > self.bufferLowerY) and (y < self.bufferUpperY)
+
+                keyPressed = pygame.key.get_pressed()
+                if keyPressed[pygame.K_LEFT]:
+
+                    if((curRoom.baseX) <= -self.velocity and charCentered ):
+                        curRoom.baseX += self.velocity
+                    elif(self.mainCharacter.roomXPos >= self.velocity):
+                        self.mainCharacter.roomXPos -= self.velocity
+
+                if keyPressed[pygame.K_RIGHT]:
+
+                    if ((curRoom.baseX + curRoom.width - self.windowWidth) >= self.velocity  and charCentered ):
+                        curRoom.baseX -= self.velocity
+                    elif (self.mainCharacter.roomXPos <= self.windowWidth - self.velocity):
+                        self.mainCharacter.roomXPos += self.velocity
+
+                if keyPressed[pygame.K_UP]:
+                    if ((curRoom.baseY) <= -self.velocity  and charCentered):
+                        curRoom.baseY += self.velocity
+                    elif (self.mainCharacter.roomYPos >= self.velocity):
+                        self.mainCharacter.roomYPos -= self.velocity
+
+                if keyPressed[pygame.K_DOWN]:
+                    if ((curRoom.baseY + curRoom.height - self.windowHeight) >= self.velocity  and charCentered):
+                        curRoom.baseY -= self.velocity
+                    elif (self.mainCharacter.roomYPos <= self.windowHeight - self.velocity):
+                        self.mainCharacter.roomYPos += self.velocity
+
+                self.updateScreen()
         pygame.quit()
 
     def updateScreen(self):
-        if(self.currentRoomIndex < self.rooms.__len__()):
-            roomToCome = self.rooms[self.currentRoomIndex]
-            if(isinstance(roomToCome, Room)):
-                roomToCome.placeEntities(self)
-                self.mainCharacter.draw(self)
-            else:
-                print("Horrible Awful Crash The Room Wasnt a Room")
-                self.run = False
+        if(self.mode==0):
+            curRoom = self.rooms[self.currentRoomIndex]
+            curRoom.placeEntities(self)
 
+            self.mainCharacter.draw(self)
             pygame.display.update()
-        else:
-            print("Horrible Awful Crash The Room Index Exceeded the Rooms list size")
-            self.run = False
 
     def scanIn(self):
         pass
