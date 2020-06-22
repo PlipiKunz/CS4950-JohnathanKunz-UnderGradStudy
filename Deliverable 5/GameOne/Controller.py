@@ -4,6 +4,7 @@ from RoomObjectWrapper import RoomObjectWrapper
 
 from Characters import MainCharacter
 from Rooms.RoomZero import Room0
+from Rooms.RoomOne import  RoomOne
 
 
 class Controller:
@@ -14,9 +15,9 @@ class Controller:
         self.screen = pygame.display.set_mode((self.windowWidth, self.windowHeight))
         pygame.display.set_caption("Game One")
 
-        self.rooms = [Room0()]
+        self.rooms = [Room0(), RoomOne()]
         self.flags = []
-        self.currentRoomIndex = 0
+        self.currentRoomIndex = 1
 
         mainCharChar = MainCharacter.MainCharacter()
         self.mainCharacter = RoomObjectWrapper(mainCharChar, 0, 0)
@@ -52,6 +53,12 @@ class Controller:
 
                 if(keyPressed[pygame.K_SPACE]):
                     self.velocity = 10
+
+                if(keyPressed[pygame.K_BACKSLASH]):
+                    curRoom.baseY = 0
+                    curRoom.baseX = 0
+                    self.currentRoomIndex = (self.currentRoomIndex+1) % self.rooms.__len__()
+                    print(self.currentRoomIndex)
 
                 if keyPressed[pygame.K_LEFT]:
                     self.mainCharacter.object.facing = "L"

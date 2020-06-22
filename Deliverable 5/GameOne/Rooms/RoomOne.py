@@ -2,9 +2,9 @@ import pygame
 from Room import Room
 
 
-class Room0(Room):
+class RoomOne(Room):
     def __init__(self):
-        sprite = [pygame.transform.scale(pygame.image.load('Images\\Bliss_(Windows_XP).png'), (700,700))]
+        sprite = [pygame.transform.scale(pygame.image.load('Images\\WigglyTuffs Guild.png'), (700,700))]
         roomNum = 0
         entrances = []
         entities = []

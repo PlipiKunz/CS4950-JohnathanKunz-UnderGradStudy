@@ -4,7 +4,7 @@ import pygame
 
 class MainCharacter(GameObject):
     def __init__(self):
-        sprs = [pygame.transform.scale(pygame.image.load('Images\\blueSquare.png'), (100,100))]
+        sprs = [pygame.transform.scale(pygame.image.load('Images\\blueSquare.png'), (50,75))]
 
         noises = 0
         ownHitbox = 0;
@@ -25,7 +25,7 @@ class MainCharacter(GameObject):
 
 
     def getWidth(self):
-        return 100
+        return 50
 
     def getHeight(self):
-        return 100
+        return 75
