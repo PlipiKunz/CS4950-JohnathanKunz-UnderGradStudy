@@ -13,20 +13,34 @@ class Room:
         self.baseX = 0
         self.baseY = 0
 
+    def reset(self):
+        self.baseX = 0
+        self.baseY = 0
+
     def specialOccuranceCheck(self, controller):
         print("SHOULDNTBEHERE specialOccuranceCheck room")
         pass
 
+    def moveRoom(self, xDif, yDif,):
+        self.baseX += xDif
+        self.baseY += yDif
+
+
     def placeEntities(self, controller):
-        print("SHOULDNTBEHERE placeEntities room")
-        pass
+        for wrapper in self.entities:
+            x = wrapper.roomXPos + self.baseX
+            y = wrapper.roomYPos + self.baseY
+            wrapper.object.drawSelf(x, y, controller)
 
-    def entityCollisionCheck(self):
-        print("SHOULDNTBEHERE entityCollisionCheck room")
-        pass
+    def entityCollisionCheck(self, controller):
+        for wrapper in self.entities:
+            if (wrapper.object.HitBox.hasCollidedCheck(controller.mainCharacter.object.HitBox, self.baseX, self.baseY)):
+                return False
 
-    def doorwayCollisionCheck(self):
-        print("SHOULDNTBEHERE doorWayCollisionCheck room")
-        pass
+        return True
 
-
+    def doorwayCollisionCheck(self, controller):
+        for door in self.entrances:
+            if(door.ownHitBox.hasCollidedCheck(controller.mainCharacter.HitBox)):
+                controller.changeRoom(door.destinationRoom, door.destinationRoomIndex)
+                break

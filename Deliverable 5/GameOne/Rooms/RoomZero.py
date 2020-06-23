@@ -20,11 +20,3 @@ class Room0(Room):
     def placeEntities(self, controller):
         controller.screen.fill((0,0,0))
         controller.screen.blit(self.roomSprite[0], (self.baseX, self.baseY))
-
-    def entityCollisionCheck(self):
-        print("SHOULDNTBEHERE entityCollisionCheck room")
-        pass
-
-    def doorwayCollisionCheck(self):
-        print("SHOULDNTBEHERE doorWayCollisionCheck room")
-        pass
