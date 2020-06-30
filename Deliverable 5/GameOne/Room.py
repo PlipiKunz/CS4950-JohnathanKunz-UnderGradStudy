@@ -25,12 +25,16 @@ class Room:
         self.baseX += xDif
         self.baseY += yDif
 
-
     def placeEntities(self, controller):
         for wrapper in self.entities:
             x = wrapper.roomXPos + self.baseX
             y = wrapper.roomYPos + self.baseY
             wrapper.object.drawSelf(x, y, controller)
+
+        for door in self.entrances:
+            x = door.roomObjectWrapper.roomXPos + self.baseX
+            y = door.roomObjectWrapper.roomYPos + self.baseY
+            door.roomObjectWrapper.object.drawSelf(x, y, controller)
 
     def entityCollisionCheck(self, controller):
         for wrapper in self.entities:
@@ -41,6 +45,6 @@ class Room:
 
     def doorwayCollisionCheck(self, controller):
         for door in self.entrances:
-            if(door.ownHitBox.hasCollidedCheck(controller.mainCharacter.HitBox)):
-                controller.changeRoom(door.destinationRoom, door.destinationRoomIndex)
+            if(door.roomObjectWrapper.object.HitBox.hasCollidedCheck(controller.mainCharacter.object.HitBox, self.baseX, self.baseY)):
+                controller.changeRoom(door.destinationRoom, door.destinationRoomEntranceIndex)
                 break

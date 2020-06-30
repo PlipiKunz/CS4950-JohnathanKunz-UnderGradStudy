@@ -17,7 +17,7 @@ class Controller:
 
         self.rooms = [Room0(), RoomOne()]
         self.flags = []
-        self.currentRoomIndex = 1
+        self.currentRoomIndex = 0
 
         mainCharChar = MainCharacter.MainCharacter()
         self.mainCharacter = RoomObjectWrapper(mainCharChar, 0, 0)
@@ -32,8 +32,11 @@ class Controller:
         self.mode = 0
 
         self.run = True
+        self.changeRoomOn = True
 
     def main(self):
+        self.scanIn()
+
         while self.run:
             pygame.time.delay(50)
 
@@ -44,6 +47,7 @@ class Controller:
             if self.mode == 0:
                 self.mode0Code()
 
+        self.saveState()
         pygame.quit()
 
     def updateScreen(self):
@@ -52,6 +56,7 @@ class Controller:
             curRoom.placeEntities(self)
 
             self.mainCharacter.draw(self)
+
             pygame.display.update()
 
     def scanIn(self):
@@ -64,19 +69,34 @@ class Controller:
         pass
 
     def changeRoom(self, roomNum, doorwayNum):
-        # resets the rooms x and y just in case
-        self.rooms[self.currentRoomIndex].baseX = 0
-        self.rooms[self.currentRoomIndex].baseY = 0
+        # resets the room just in case
+        self.rooms[self.currentRoomIndex].reset()
 
         self.currentRoomIndex = roomNum
         room = self.rooms[self.currentRoomIndex]
 
-        room.baseX = -room.entrances[doorwayNum].ownHitbox.lowerRight[0]
-        room.baseY = -room.entrances[doorwayNum].ownHitbox.upperLeft[1]
+        doorway = room.entrances[doorwayNum]
+        room.baseX = -(doorway.cameraLocationX)
+        if(room.baseX - self.windowWidth < - room.width):
+            room.baseX = -(room.width - self.windowWidth)
+        elif(room.baseX >0):
+            room.baseX = 0
+
+        room.baseY = -(doorway.cameraLocationY)
+        if((room.baseY - self.windowHeight < -room.width)):
+            room.baseY = -(room.height - self.windowHeight)
+        elif (room.baseY > 0):
+            room.baseY = 0
+
+        self.mainCharacter.roomXPos = doorway.putPlayerX + room.baseX
+        self.mainCharacter.roomYPos = doorway.putPlayerY + room.baseY
+
+        self.changeRoomOn = False
+
+
 
     def changeToBattleRoom(self, enemy, conditions):
-        pass
-
+         pass
 
     def mode0Code(self):
         curRoom = self.rooms[self.currentRoomIndex]
@@ -91,14 +111,10 @@ class Controller:
         if keyPressed[pygame.K_SPACE]:
             self.velocity = 10
 
-        if keyPressed[pygame.K_BACKSLASH]:
-            curRoom.reset()
-            self.currentRoomIndex = (self.currentRoomIndex + 1) % self.rooms.__len__()
-            print(self.currentRoomIndex)
-
-        distanceCheck = self.velocity * 2
+        distanceCheck = self.velocity * 1.2
 
         if keyPressed[pygame.K_LEFT]:
+            self.changeRoomOn = True
             self.mainCharacter.object.facing = "L"
 
             self.mainCharacter.changePos(-distanceCheck, 0)
@@ -110,6 +126,7 @@ class Controller:
             self.mainCharacter.changePos(distanceCheck, 0)
 
         if keyPressed[pygame.K_RIGHT]:
+            self.changeRoomOn = True
             self.mainCharacter.object.facing = "R"
 
             self.mainCharacter.changePos(distanceCheck, 0)
@@ -121,6 +138,8 @@ class Controller:
             self.mainCharacter.changePos(-distanceCheck, 0)
 
         if keyPressed[pygame.K_UP]:
+            self.changeRoomOn = True
+
             self.mainCharacter.object.facing = "U"
 
             self.mainCharacter.changePos(0, -distanceCheck)
@@ -132,6 +151,7 @@ class Controller:
             self.mainCharacter.changePos(0, distanceCheck)
 
         if keyPressed[pygame.K_DOWN]:
+            self.changeRoomOn = True
             self.mainCharacter.object.facing = "D"
 
             self.mainCharacter.changePos(0, distanceCheck)
@@ -143,5 +163,7 @@ class Controller:
             self.mainCharacter.changePos(0, - distanceCheck)
 
         self.velocity = 5
-        curRoom.doorwayCollisionCheck(self)
+
+        if(self.changeRoomOn):
+            curRoom.doorwayCollisionCheck(self)
         self.updateScreen()

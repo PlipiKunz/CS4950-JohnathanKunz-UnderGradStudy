@@ -20,7 +20,7 @@ class GameObject:
         pass
 
     def getWidth(self):
-        pass
+        return self.HitBox.width
 
     def getHeight(self):
-        pass
+        return self.HitBox.height

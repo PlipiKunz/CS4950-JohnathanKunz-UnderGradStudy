@@ -21,9 +21,3 @@ class MainCharacter(GameObject):
 
     def interact(self, controller):
         print("How does it make sense to interact with the main character?")
-
-    def getWidth(self):
-        return 50
-
-    def getHeight(self):
-        return 75

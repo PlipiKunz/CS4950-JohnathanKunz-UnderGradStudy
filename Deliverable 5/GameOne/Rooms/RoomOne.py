@@ -1,33 +1,17 @@
 import pygame
-
-from Characters import MainCharacter
 from Room import Room
 from Characters import SecondChar
 from RoomObjectWrapper import RoomObjectWrapper
-
-
+from Objects import Door
+from DoorWay import DoorWay
 
 class RoomOne(Room):
     def __init__(self):
-        sprite = [pygame.transform.scale(pygame.image.load('Images\\WigglyTuffs Guild.png'), (700,700))]
-        roomNum = 0
-        entrances = []
-        entities = []
-        roomWidth = sprite[0].get_width()
-        print(roomWidth)
-        roomHeight = sprite[0].get_height()
-
-        secondChar = SecondChar.SecondCharac()
-        secondChar2 = RoomObjectWrapper(secondChar, 0,0)
-        secondChar2.changePos(300,300)
-
-        entities = [secondChar2]
-
-        super().__init__(sprite, roomNum, entrances, entities, roomWidth, roomHeight)
+        self.reset()
 
     def reset(self):
         sprite = [pygame.transform.scale(pygame.image.load('Images\\WigglyTuffs Guild.png'), (700, 700))]
-        roomNum = 0
+        roomNum = 1
         entrances = []
         entities = []
         roomWidth = sprite[0].get_width()
@@ -35,10 +19,13 @@ class RoomOne(Room):
         roomHeight = sprite[0].get_height()
 
         secondChar = SecondChar.SecondCharac()
-        secondChar2 = RoomObjectWrapper(secondChar, 0, 0)
-        secondChar2.changePos(300, 300)
-
+        secondChar2 = RoomObjectWrapper(secondChar, 300, 300)
         entities = [secondChar2]
+
+        doorObject = Door.Door()
+        doorObject.facing = "R"
+        door1 = DoorWay(doorObject, 0, 0, 0, 500)
+        entrances = [door1]
 
         super().__init__(sprite, roomNum, entrances, entities, roomWidth, roomHeight)
 

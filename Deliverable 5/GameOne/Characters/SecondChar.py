@@ -9,7 +9,7 @@ class SecondCharac(GameObject):
 
         noises = 0
         ownHitbox = HitBox([0,0], 50, 75)
-        name = "main Character"
+        name = "testOtherChar"
 
         facing = "D"
 
@@ -19,10 +19,4 @@ class SecondCharac(GameObject):
         controller.screen.blit(self.ownSprites[0], (x,y))
 
     def interact(self, controller):
-        print("How does it make sense to interact with the main character?")
-
-    def getWidth(self):
-        return 50
-
-    def getHeight(self):
-        return 75
+        print("")

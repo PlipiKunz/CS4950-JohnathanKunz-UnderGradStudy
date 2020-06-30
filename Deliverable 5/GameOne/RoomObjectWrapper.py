@@ -11,7 +11,6 @@ class RoomObjectWrapper:
 
         self.changePos(xPos, yPos)
 
-
     def changePos(self, xChange, yChange):
         self.roomXPos += xChange
         self.roomYPos += yChange
