@@ -16,7 +16,7 @@ class GameObject:
         pass
 
     def interact(self, controller):
-        print("SHOULDNTBEHERE interact gameObject" + self.name)
+        print(self.name)
         pass
 
     def getWidth(self):

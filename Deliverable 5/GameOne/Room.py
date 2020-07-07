@@ -48,3 +48,9 @@ class Room:
             if(door.roomObjectWrapper.object.HitBox.hasCollidedCheck(controller.mainCharacter.object.HitBox, self.baseX, self.baseY)):
                 controller.changeRoom(door.destinationRoom, door.destinationRoomEntranceIndex)
                 break
+
+    def interact(self, controller):
+        for wrapper in self.entities:
+            if (wrapper.object.HitBox.hasCollidedCheck(controller.interactHitBox, self.baseX, self.baseY)):
+                wrapper.object.interact(controller)
+                print("Interacted")

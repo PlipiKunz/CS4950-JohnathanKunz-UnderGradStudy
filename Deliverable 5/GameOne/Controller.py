@@ -3,6 +3,7 @@ from Room import Room
 from RoomObjectWrapper import RoomObjectWrapper
 
 from Characters import MainCharacter
+from HitBox import HitBox
 from Rooms.RoomZero import Room0
 from Rooms.RoomOne import  RoomOne
 
@@ -21,6 +22,7 @@ class Controller:
 
         mainCharChar = MainCharacter.MainCharacter()
         self.mainCharacter = RoomObjectWrapper(mainCharChar, 0, 0)
+        self.interactHitBox = self.getInteractHitbox()
 
         self.bufferLowerX = 200
         self.bufferUpperX = 225
@@ -65,7 +67,7 @@ class Controller:
     def saveState(self):
         pass
 
-    def displayTextBox(self, spr, content, speed, noise, font):
+    def displayTextBox(self, content, spr=0,  speed=0, noise=0, font=0):
         pass
 
     def changeRoom(self, roomNum, doorwayNum):
@@ -93,8 +95,6 @@ class Controller:
 
         self.changeRoomOn = False
 
-
-
     def changeToBattleRoom(self, enemy, conditions):
          pass
 
@@ -108,7 +108,7 @@ class Controller:
 
         keyPressed = pygame.key.get_pressed()
 
-        if keyPressed[pygame.K_SPACE]:
+        if keyPressed[pygame.K_LSHIFT]:
             self.velocity = 10
 
         distanceCheck = self.velocity * 1.2
@@ -166,4 +166,51 @@ class Controller:
 
         if(self.changeRoomOn):
             curRoom.doorwayCollisionCheck(self)
+
+        if keyPressed[pygame.K_SPACE]:
+            self.interactHitBox = self.getInteractHitbox()
+            curRoom.interact(self)
+
         self.updateScreen()
+
+    def getInteractHitbox(self):
+        vector = [0, 0]
+        facing = self.mainCharacter.object.facing
+        if (facing == "U"):
+            vector = [0, -1]
+        elif (facing == "D"):
+            vector = [0, 1]
+        elif (facing == "L"):
+            vector = [-1, 0]
+        else:
+            vector = [1, 0]
+
+        width = 0
+        height = 0
+        x = 0
+        y = 0
+
+        # meaning that it is L or R
+        if (vector[0]!=0):
+            width = self.mainCharacter.object.getWidth()//4
+            height = self.mainCharacter.object.getHeight()
+
+            if(vector[0]<0):
+                x = self.mainCharacter.object.HitBox.upperLeft[0] - width
+            else:
+                x = self.mainCharacter.object.HitBox.upperLeft[0] + self.mainCharacter.object.HitBox.width
+            y = self.mainCharacter.object.HitBox.upperLeft[1]
+
+        else:
+            width = self.mainCharacter.object.getWidth()
+            height = self.mainCharacter.object.getHeight()//4
+
+            if(vector[1]<0):
+                y = self.mainCharacter.object.HitBox.upperLeft[1] - height
+            else:
+                y = self.mainCharacter.object.HitBox.upperLeft[1] + self.mainCharacter.object.HitBox.height
+            x = self.mainCharacter.object.HitBox.upperLeft[0]
+
+        return HitBox([x,y],width,height)
+
+
