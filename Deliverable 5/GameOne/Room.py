@@ -53,4 +53,3 @@ class Room:
         for wrapper in self.entities:
             if (wrapper.object.HitBox.hasCollidedCheck(controller.interactHitBox, self.baseX, self.baseY)):
                 wrapper.object.interact(controller)
-                print("Interacted")

@@ -35,12 +35,13 @@ class Controller:
 
         self.run = True
         self.changeRoomOn = True
+        self.delay = 50
 
     def main(self):
         self.scanIn()
 
         while self.run:
-            pygame.time.delay(50)
+            pygame.time.delay(self.delay)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -67,8 +68,30 @@ class Controller:
     def saveState(self):
         pass
 
-    def displayTextBox(self, content, spr=0,  speed=0, noise=0, font=0):
-        pass
+    def displayTextBox(self, content,  font=0, speeds=0, clrs=0, noise=0,):
+        font = pygame.font.Font('freesansbold.ttf', 32)
+
+        black = (250,0,0)
+
+        notDone = True
+        loc = 0
+        curContent = ""
+        while(loc < len(content)):
+            curContent = curContent + content[loc]
+            loc += 1
+
+            self.updateScreen()
+
+            text = font.render(curContent, True, black)
+            self.screen.blit(text, (100,250))
+            pygame.display.update()
+            pygame.time.delay(self.delay)
+
+
+
+
+
+
 
     def changeRoom(self, roomNum, doorwayNum):
         # resets the room just in case

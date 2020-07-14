@@ -16,7 +16,7 @@ class GameObject:
         pass
 
     def interact(self, controller):
-        print(self.name)
+        controller.displayTextBox(self.name)
         pass
 
     def getWidth(self):
