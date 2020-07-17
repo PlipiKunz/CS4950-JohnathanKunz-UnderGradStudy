@@ -1,0 +1,3 @@
+Make sure to call pygame.event.pump() in every loop or the game gets backed up
+and wont accept new key presses or other pieces
+    

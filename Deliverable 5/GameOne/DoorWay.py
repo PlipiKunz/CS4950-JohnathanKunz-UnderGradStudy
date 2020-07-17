@@ -15,7 +15,6 @@ class DoorWay:
         vector = [0, 0]
 
         facing = object.facing
-        print(facing)
         if(facing=="U"):
             vector = [0, -1]
         elif(facing=="D"):
