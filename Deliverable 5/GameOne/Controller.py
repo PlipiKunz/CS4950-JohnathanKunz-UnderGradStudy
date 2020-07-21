@@ -152,18 +152,36 @@ class Controller:
     def saveState(self):
         pass
 
-    def displayTextBox(self, content,  font=0, speeds=0, clrs=0, noise=0,):
+
+    # Sprites should be 90x90
+    def displayTextBox(self, content, sprite=0, font=0, clr=0, noise=0):
         fontSize = 24
         font = pygame.font.Font('freesansbold.ttf', fontSize)
 
         black = (0,0,0)
         white = (255,255,255)
         red = (255,0,0)
-        dialogYLoc = 350
-        dialogXLoc = 50
-        dialogWidth = self.windowWidth-2*dialogXLoc
-        dialogHeight = 100
-        dialogRect = pygame.Rect((dialogXLoc, dialogYLoc), (dialogWidth, dialogHeight))
+
+        if(sprite==0):
+            dialogYLoc = 400
+            dialogXLoc = 50
+            dialogWidth = self.windowWidth-2*dialogXLoc
+            dialogHeight = 100
+            dialogRect = pygame.Rect((dialogXLoc, dialogYLoc), (dialogWidth, dialogHeight))
+        else:
+            dialogYLoc = 400
+            dialogXLoc = 50
+            dialogWidth = self.windowWidth - 2 * dialogXLoc
+            dialogXLoc = self.windowWidth - dialogWidth
+
+            dialogHeight = 100
+            dialogRect = pygame.Rect((dialogXLoc, dialogYLoc), (dialogWidth, dialogHeight))
+
+            imgRect = pygame.Rect((0, dialogYLoc), (100,100))
+            imgRectColor = red
+            padding = 5
+            sprite = pygame.transform.scale(sprite, (90,90))
+
 
         loc = -1
         curContent1 = ""
@@ -217,6 +235,9 @@ class Controller:
                             text3 = font.render(curContent3, True, white)
 
                         pygame.draw.rect(self.screen, black, dialogRect)
+                        if(sprite!=0):
+                            pygame.draw.rect(self.screen, imgRectColor, imgRect)
+                            self.screen.blit(sprite, (0 + padding, dialogYLoc + padding))
 
                         self.screen.blit(text1, (dialogXLoc, dialogYLoc + 5))
                         self.screen.blit(text2, (dialogXLoc, dialogYLoc + 5 + fontSize))
@@ -252,6 +273,9 @@ class Controller:
                     self.updateScreen()
 
                     pygame.draw.rect(self.screen, black, dialogRect)
+                    if (sprite != 0):
+                        pygame.draw.rect(self.screen, imgRectColor, imgRect)
+                        self.screen.blit(sprite, (0 + padding, dialogYLoc + padding))
 
                     self.screen.blit(text1, (dialogXLoc, dialogYLoc + 5))
                     self.screen.blit(text2, (dialogXLoc, dialogYLoc + 5 + fontSize))
@@ -287,6 +311,9 @@ class Controller:
             self.updateScreen()
 
             pygame.draw.rect(self.screen, black, dialogRect)
+            if (sprite != 0):
+                pygame.draw.rect(self.screen, imgRectColor, imgRect)
+                self.screen.blit(sprite, (0 + padding, dialogYLoc + padding))
 
             self.screen.blit(text1, (dialogXLoc, dialogYLoc + 5))
             self.screen.blit(text2, (dialogXLoc, dialogYLoc + 5 + fontSize))
@@ -295,7 +322,7 @@ class Controller:
             if(displayMessage%20 < 10):
                 finishedMessage = "END DIALOG"
                 finishedMessage = font.render(finishedMessage, True, red, white)
-                self.screen.blit(finishedMessage, (dialogXLoc, dialogYLoc + dialogHeight))
+                self.screen.blit(finishedMessage, (dialogXLoc + dialogWidth - finishedMessage.get_width(), dialogYLoc + dialogHeight - fontSize))
             displayMessage += 1
             displayMessage = displayMessage%20
 

@@ -2,7 +2,9 @@ import pygame
 
 from DoorWay import DoorWay
 from Objects import Door
+from Objects import Cabinet
 from Room import Room
+from RoomObjectWrapper import RoomObjectWrapper
 
 
 class Room0(Room):
@@ -39,6 +41,9 @@ class Room0(Room):
         door5 = DoorWay(doorObject, 0, 3, roomWidth // 2, 600, )
 
         entrances = [door1, door2, door3, door4, door5]
+        cabinent = Cabinet.Cabinent()
+
+        entities = [RoomObjectWrapper(cabinent, 300, 300)]
 
         super().__init__(sprite, roomNum, entrances, entities, roomWidth, roomHeight)
 
