@@ -5,7 +5,7 @@ from RoomObjectWrapper import RoomObjectWrapper
 from Characters import MainCharacter
 from HitBox import HitBox
 from Rooms.RoomZero import Room0
-from Rooms.RoomOne import  RoomOne
+from Rooms.RoomOne import RoomOne
 
 
 class Controller:
@@ -36,6 +36,9 @@ class Controller:
         self.run = True
         self.changeRoomOn = True
         self.delay = 50
+
+        self.hp = 10
+        self.items = []
 
     def main(self):
         self.scanIn()
@@ -151,7 +154,6 @@ class Controller:
 
     def saveState(self):
         pass
-
 
     # Sprites should be 90x90
     def displayTextBox(self, content, sprite=0, font=0, clr=0, noise=0):
@@ -360,7 +362,76 @@ class Controller:
         self.changeRoomOn = False
 
     def changeToBattleRoom(self, enemy, conditions):
-         pass
+        curHp = self.hp
+        loc = 0
+        biggestLoc = 3
+        options = ["attack", "interact", "items", "flee"]
+
+        black = (0,0,0)
+        white = (255,255,255)
+        grey = (100,100,100)
+        yellow = (255,255,0)
+        red = (255,0,0)
+
+        fontSize = 30
+        font = pygame.font.Font('freesansbold.ttf', fontSize)
+
+        turn = 0
+        battling = True
+        while(curHp > 0 and battling):
+            # players choice section
+            while True and battling:
+                pygame.time.delay(self.delay*2)
+                pygame.event.pump()
+                keyPressed = pygame.key.get_pressed()
+
+                dialogStartX = 25
+                dialogStartY = 450
+                self.screen.fill(black)
+
+                if keyPressed[pygame.K_SPACE]:
+                    if(loc==0):
+                        pass
+                    elif(loc==1):
+                        pass
+                    elif(loc==2):
+                        pass
+                    else:
+                        text = font.render("FLEEING", True, red)
+                        self.screen.blit(text,(dialogStartX, dialogStartY))
+                        pygame.display.update()
+                        pygame.time.delay(self.delay*10)
+                        battling = False
+                        break
+                else:
+                    if keyPressed[pygame.K_LEFT]:
+                        loc = (loc - 1) % (biggestLoc+1)
+                    if keyPressed[pygame.K_RIGHT]:
+                        loc = (loc + 1) % (biggestLoc + 1)
+                    prevWidth = 0
+
+                    text = font.render("HP:  " +  (str)(curHp), True, white)
+                    self.screen.blit(text, (dialogStartX, dialogStartY - 26))
+
+                    for i in range(0, options.__len__()):
+                        if(i==loc):
+                            text = font.render(options[i], True, yellow, grey)
+                        else:
+                            text = font.render(options[i], True, white, grey)
+
+                        self.screen.blit(text, (dialogStartX , dialogStartY +10))
+                        dialogStartX  += text.get_width() + 25
+                pygame.display.update()
+
+            # enemies turn
+            while True and battling:
+                pass
+
+            turn += 1
+
+        if(curHp < 0):
+            pass
+
 
     def getInteractHitbox(self):
         vector = [0, 0]

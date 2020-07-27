@@ -22,3 +22,5 @@ class Cabinent(GameObject):
         textContent = "The file cabinet is empty"
         controller.displayTextBox(textContent)
 
+        controller.changeToBattleRoom(0,0)
+
