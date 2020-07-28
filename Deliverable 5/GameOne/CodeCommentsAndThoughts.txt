@@ -1,3 +1,9 @@
 Make sure to call pygame.event.pump() in every loop or the game gets backed up
 and wont accept new key presses or other pieces
     
+
+Next time allow there to be mulitple hitboxes for 1 object, and have collision check all
+of them
+
+
+Next time have get methods for everything

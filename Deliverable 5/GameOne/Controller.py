@@ -6,6 +6,7 @@ from Characters import MainCharacter
 from HitBox import HitBox
 from Rooms.RoomZero import Room0
 from Rooms.RoomOne import RoomOne
+import battleObject
 
 
 class Controller:
@@ -361,7 +362,7 @@ class Controller:
 
         self.changeRoomOn = False
 
-    def changeToBattleRoom(self, enemy, conditions):
+    def changeToBattleRoom(self, enemyBattleObject, message, conditions):
         curHp = self.hp
         loc = 0
         biggestLoc = 3
@@ -378,9 +379,12 @@ class Controller:
 
         turn = 0
         battling = True
+        message = message
+
         while(curHp > 0 and battling):
             # players choice section
-            while True and battling:
+            myTurn = True
+            while True and battling and myTurn:
                 pygame.time.delay(self.delay*2)
                 pygame.event.pump()
                 keyPressed = pygame.key.get_pressed()
@@ -391,9 +395,10 @@ class Controller:
 
                 if keyPressed[pygame.K_SPACE]:
                     if(loc==0):
-                        pass
+                        enemyBattleObject.changeHealth(-2)
+                        myTurn = False
                     elif(loc==1):
-                        pass
+                        enemyBattleObject.getInteracts(turn)
                     elif(loc==2):
                         pass
                     else:
@@ -403,35 +408,51 @@ class Controller:
                         pygame.time.delay(self.delay*10)
                         battling = False
                         break
-                else:
-                    if keyPressed[pygame.K_LEFT]:
-                        loc = (loc - 1) % (biggestLoc+1)
-                    if keyPressed[pygame.K_RIGHT]:
-                        loc = (loc + 1) % (biggestLoc + 1)
-                    prevWidth = 0
 
-                    text = font.render("HP:  " +  (str)(curHp), True, white)
-                    self.screen.blit(text, (dialogStartX, dialogStartY - 26))
+                if keyPressed[pygame.K_LEFT]:
+                    loc = (loc - 1) % (biggestLoc+1)
+                if keyPressed[pygame.K_RIGHT]:
+                    loc = (loc + 1) % (biggestLoc + 1)
+                prevWidth = 0
 
-                    for i in range(0, options.__len__()):
-                        if(i==loc):
-                            text = font.render(options[i], True, yellow, grey)
-                        else:
-                            text = font.render(options[i], True, white, grey)
+                for i in range(0, options.__len__()):
+                    if(i==loc):
+                        text = font.render(options[i], True, yellow, grey)
+                    else:
+                        text = font.render(options[i], True, white, grey)
 
-                        self.screen.blit(text, (dialogStartX , dialogStartY +10))
-                        dialogStartX  += text.get_width() + 25
+                    self.screen.blit(text, (dialogStartX , dialogStartY +10))
+                    dialogStartX  += text.get_width() + 25
+
+                if ( message != ""):
+                    MessageX = 25
+                    MessageY = 450 - 26 - 36
+                    text = font.render(message, True, red)
+                    self.screen.blit(text, (MessageX, MessageY))
+
+                text = font.render("Enemy Health:  " + (str)(enemyBattleObject.hp), True, white)
+                self.screen.blit(text, (25, 25))
+
+                hpX = 25
+                hpY = 450 - 26
+                text = font.render("HP:  " + (str)(curHp), True, white)
+                self.screen.blit(text, (hpX, hpY))
+                thingToDraw = enemyBattleObject.getSprite(turn)
+                self.screen.blit(thingToDraw, (self.windowWidth/2 - thingToDraw.get_width()/2 , 30))
                 pygame.display.update()
+
 
             # enemies turn
             while True and battling:
-                pass
+                self.screen.fill(black)
 
+                enemyBattleObject.runAttack(turn)
+
+            message = enemyBattleObject.getMessage
             turn += 1
 
         if(curHp < 0):
             pass
-
 
     def getInteractHitbox(self):
         vector = [0, 0]

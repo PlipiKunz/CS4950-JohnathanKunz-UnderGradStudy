@@ -1,6 +1,7 @@
 from GameObject import GameObject
 import pygame
 from HitBox import HitBox
+from battleObject import battleObject
 
 
 class Cabinent(GameObject):
@@ -22,5 +23,7 @@ class Cabinent(GameObject):
         textContent = "The file cabinet is empty"
         controller.displayTextBox(textContent)
 
-        controller.changeToBattleRoom(0,0)
+
+        bo = battleObject(self.ownSprites, [], 10, [""])
+        controller.changeToBattleRoom(bo,"A File Cabinent Approaches", 0)
 
