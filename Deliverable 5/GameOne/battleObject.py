@@ -21,8 +21,15 @@ class battleObject:
         pass
 
     def getInteracts(self, turn):
-        pass
+        return ["Add File", "Close Cabinet", "Insult", "Do Nothing"]
 
     def respondInteract(self, turn, option):
-        pass
+        if(option==0):
+            return True, "Thanks, I am happy now"
+        elif(option==1):
+            return False, "Whoops, shouldnt have left that open"
+        elif(option==2):
+            return False, "Well arent you lovely, NOT"
+        else:
+            return False, "Uh, are you gonna do anything?"
 

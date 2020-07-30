@@ -13,17 +13,22 @@ class Cabinent(GameObject):
         name = "cabinet"
 
         facing = "D"
-
         super().__init__(sprs, noises, ownHitbox, name, facing)
+        self.fought = 0
 
     def drawSelf(self, x, y, controller):
         controller.screen.blit(self.ownSprites[0], (x,y))
 
     def interact(self, controller):
-        textContent = "The file cabinet is empty"
-        controller.displayTextBox(textContent)
+        print(self.fought)
+        if(self.fought==0):
+            textContent = "The file cabinet attacks!!"
+            controller.displayTextBox(textContent)
 
 
-        bo = battleObject(self.ownSprites, [], 10, [""])
-        controller.changeToBattleRoom(bo,"A File Cabinent Approaches", 0)
+            bo = battleObject(self.ownSprites, [], 10, [""])
+            controller.changeToBattleRoom(bo,"A File Cabinent Approaches", 0)
+            self.fought += 1
+        else:
+            controller.displayTextBox("You have already defeated this enemy ")
 

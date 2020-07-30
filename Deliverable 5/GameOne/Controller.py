@@ -6,6 +6,7 @@ from Characters import MainCharacter
 from HitBox import HitBox
 from Rooms.RoomZero import Room0
 from Rooms.RoomOne import RoomOne
+import random
 import battleObject
 
 
@@ -157,6 +158,7 @@ class Controller:
         pass
 
     # Sprites should be 90x90
+    # passed in strings must end in " "
     def displayTextBox(self, content, sprite=0, font=0, clr=0, noise=0):
         fontSize = 24
         font = pygame.font.Font('freesansbold.ttf', fontSize)
@@ -367,7 +369,7 @@ class Controller:
         loc = 0
         biggestLoc = 3
         options = ["attack", "interact", "items", "flee"]
-
+        convinced = False
         black = (0,0,0)
         white = (255,255,255)
         grey = (100,100,100)
@@ -381,39 +383,137 @@ class Controller:
         battling = True
         message = message
 
-        while(curHp > 0 and battling):
+        while(battling):
             # players choice section
+
             myTurn = True
             while True and battling and myTurn:
-                pygame.time.delay(self.delay*2)
-                pygame.event.pump()
-                keyPressed = pygame.key.get_pressed()
-
                 dialogStartX = 25
                 dialogStartY = 450
                 self.screen.fill(black)
 
+                pygame.time.delay(self.delay * 2)
+                pygame.event.pump()
+                keyPressed = pygame.key.get_pressed()
+
                 if keyPressed[pygame.K_SPACE]:
                     if(loc==0):
-                        enemyBattleObject.changeHealth(-2)
+                        damage = 2
+                        enemyBattleObject.changeHealth(-damage)
+
+                        message = str(damage) + " damage dealt to enemy"
                         myTurn = False
-                    elif(loc==1):
-                        enemyBattleObject.getInteracts(turn)
-                    elif(loc==2):
-                        pass
+                    elif(loc==1 or loc==2):
+                        notChosen = True
+                        index = 0
+                        sizeOfPage = 4
+                        atNavigators = True
+                        # max length 4
+                        arrayOfOptions  = []
+                        if(loc==1):
+                            arrayOfOptions = enemyBattleObject.getInteracts(turn)
+                        lenOfList = arrayOfOptions.__len__()
+
+                        while(notChosen):
+                            pygame.time.delay(self.delay * 2)
+                            pygame.event.pump()
+                            keyPressed = pygame.key.get_pressed()
+
+                            prevLoc = index
+                            amountChangedBy = 0
+                            if(keyPressed[pygame.K_LEFT]):
+                                if(not atNavigators):
+                                    index = prevLoc - 1
+                                    amountChangedBy = -1
+                            elif(keyPressed[pygame.K_RIGHT]):
+                                if(not atNavigators):
+                                    index = prevLoc + 1
+                                    amountChangedBy = 1
+
+                            elif(keyPressed[pygame.K_UP]):
+                                if(not atNavigators):
+                                    index = prevLoc - 2
+                                    amountChangedBy = -2
+
+                            elif(keyPressed[pygame.K_DOWN]):
+                                if(atNavigators):
+                                    atNavigators = False
+                                else:
+                                    index += 2
+                                    amountChangedBy = 2
+
+                            if(index < 0):
+                                index = prevLoc
+                                atNavigators = True
+                            if(index > lenOfList):
+                                index -= amountChangedBy
+
+                            if(keyPressed[pygame.K_SPACE]):
+                                if(atNavigators):
+                                    pass
+                                else:
+                                    self.screen.fill(black)
+                                    if(loc==1):
+                                        responseBool, response = enemyBattleObject.respondInteract(turn, index)
+                                        convinced = responseBool
+
+                                        message = response
+
+                                    myTurn = False
+                                notChosen = False
+
+                            self.screen.fill(black)
+                            text = font.render("Enemy Health:  " + (str)(enemyBattleObject.hp), True, white)
+                            self.screen.blit(text, (25, 10))
+
+                            thingToDraw = enemyBattleObject.getSprite(turn)
+                            self.screen.blit(thingToDraw, (self.windowWidth / 2 - thingToDraw.get_width() / 2, 40))
+
+
+                            if (message != ""):
+                                MessageXLocal = 25
+                                MessageYLocal = 450 - 26 - 36 - 26
+                                text = font.render(message, True, red)
+                                self.screen.blit(text, (MessageXLocal, MessageYLocal))
+
+                            hpX = 25
+                            hpY = 450 - 26 - 26
+                            col = white
+                            if(atNavigators):
+                                col = yellow
+                            text = font.render("Back:  " + (str)(curHp), True, col, grey)
+                            self.screen.blit(text, (hpX, hpY))
+
+                            hpY += 30
+                            i = 0
+                            for i in range(0, lenOfList):
+                                col = white
+                                if(index==i and not atNavigators):
+                                    col = yellow
+                                thingToDraw = font.render(str(arrayOfOptions[i]), True, col, grey)
+
+                                zerothOrFirstRow = 0
+                                if(i >= 2):
+                                    zerothOrFirstRow = 1
+                                self.screen.blit(thingToDraw, (hpX +(i%2)*(self.windowWidth/2), hpY + (zerothOrFirstRow*30)))
+
+                            pygame.display.update()
                     else:
                         text = font.render("FLEEING", True, red)
                         self.screen.blit(text,(dialogStartX, dialogStartY))
                         pygame.display.update()
                         pygame.time.delay(self.delay*10)
                         battling = False
-                        break
 
                 if keyPressed[pygame.K_LEFT]:
                     loc = (loc - 1) % (biggestLoc+1)
                 if keyPressed[pygame.K_RIGHT]:
                     loc = (loc + 1) % (biggestLoc + 1)
                 prevWidth = 0
+
+
+                self.screen.fill(black)
+
 
                 for i in range(0, options.__len__()):
                     if(i==loc):
@@ -431,28 +531,52 @@ class Controller:
                     self.screen.blit(text, (MessageX, MessageY))
 
                 text = font.render("Enemy Health:  " + (str)(enemyBattleObject.hp), True, white)
-                self.screen.blit(text, (25, 25))
+                self.screen.blit(text, (25, 10))
 
                 hpX = 25
                 hpY = 450 - 26
                 text = font.render("HP:  " + (str)(curHp), True, white)
                 self.screen.blit(text, (hpX, hpY))
                 thingToDraw = enemyBattleObject.getSprite(turn)
-                self.screen.blit(thingToDraw, (self.windowWidth/2 - thingToDraw.get_width()/2 , 30))
+                self.screen.blit(thingToDraw, (self.windowWidth/2 - thingToDraw.get_width()/2 , 40))
                 pygame.display.update()
 
+            pygame.time.delay(self.delay * 10)
 
+            enemyDamage = 0
             # enemies turn
-            while True and battling:
-                self.screen.fill(black)
+            if True and battling and enemyBattleObject.hp >= 0 and curHp >= 0 and not convinced:
+                enemyDamage = random.randrange(0,5)
+                curHp -= enemyDamage
+                # enemyBattleObject.runAttack(turn)
 
-                enemyBattleObject.runAttack(turn)
-
-            message = enemyBattleObject.getMessage
+            message = "the enemy dealt " + str(enemyDamage) + " damage"
             turn += 1
 
-        if(curHp < 0):
-            pass
+            print(enemyBattleObject.hp)
+            if(curHp <= 0 or enemyBattleObject.hp <= 0 or convinced):
+                self.screen.fill(black)
+                if(enemyBattleObject.hp <= 0):
+                    self.hp = curHp
+                    text = font.render("YOU WIN!", True, red)
+                if(convinced):
+                    text = font.render("YOU BOTH WIN!!!", True, red)
+                if(curHp <= 0):
+                    text = font.render("you lose...", True, red)
+
+
+                dialogStartX = 25
+                dialogStartY = 450
+                self.screen.blit(text, (dialogStartX, dialogStartY))
+                pygame.display.update()
+                pygame.time.delay(self.delay * 20)
+                battling = False
+
+                if(curHp <= 0):
+                    pygame.quit()
+                    quit()
+
+                return
 
     def getInteractHitbox(self):
         vector = [0, 0]
